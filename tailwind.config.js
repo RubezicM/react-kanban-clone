@@ -1,10 +1,10 @@
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   theme: {
-    extend: {},
+    extend: {}
   },
   variants: {
-    extend: {},
+    extend: {}
   },
   plugins: [require('daisyui')],
   important: true,
