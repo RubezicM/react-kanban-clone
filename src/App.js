@@ -1,25 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import './index.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import { LanesProvider } from './context/LanesContext'
+import BoardsPage from './pages/BoardsPage'
+
+export const Content = () => (
+  <LanesProvider>
+    <Router>
+      <>
+        <div className="h-full">
+          <Routes>
+            <Route exact path="/" element={<BoardsPage/>}/>
+          </Routes>
+        </div>
+      </>
+    </Router>
+  </LanesProvider>
+);
+
+const App = () => <Content/>;
 
 export default App;
