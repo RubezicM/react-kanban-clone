@@ -4,49 +4,50 @@ import React, { useContext } from 'react'
 
 
 export const DragDropContainer = ({children}) => {
-  const { tasks, columns, dispatch } = useContext(LanesContext)
-
-  const reorderArray = (arr, fromIndex, toIndex) => {
-    let element = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, element);
-
-    return arr
-  }
+  const { columns, dispatch } = useContext(LanesContext)
 
   const onDragEnd = result => {
-
     const { destination, source, draggableId } = result
-
+    console.log('res',result)
     if(!destination) return
 
     if(destination.droppableId ===  source.droppableId && destination.index === source.index) return
 
+    const startColumn = columns[source.droppableId]
+    const finishColumn = columns[destination.droppableId]
 
-    const column = columns[source.droppableId]
-    const newTaskIds = Array.from(column.tasksId)
-    newTaskIds.splice(source.index, 1)
-    newTaskIds.splice(destination.index, 0, draggableId)
-    dispatch({type:'REORDER_TASKS', payload: {
-        ...column,
-        tasksId: newTaskIds
+    console.log('finishColumn',finishColumn)
+
+    if(startColumn === finishColumn) {
+      const newTaskIds = Array.from(startColumn.tasksId)
+      newTaskIds.splice(source.index, 1)
+      newTaskIds.splice(destination.index, 0, draggableId)
+
+      dispatch({type:'REORDER_TASKS_IN_COLUMN', payload: {
+          ...startColumn,
+          tasksId: newTaskIds
+        }})
+      return
+    }
+
+
+    // moving from one col to another
+    const newTaskIds = Array.from(startColumn.tasksId)
+    const goalTaskIds = Array.from(finishColumn.tasksId)
+    newTaskIds.splice(source.index,1)
+    goalTaskIds.splice(destination.index,0,draggableId)
+
+    dispatch({type:'MOVE_TASK_TO_COLUMN', payload: {
+        ...columns,
+        [source.droppableId]: {
+          ...startColumn,
+          tasksId: newTaskIds
+        },
+        [destination.droppableId]: {
+          ...finishColumn,
+          tasksId: goalTaskIds
+        }
       }})
-    // console.log(result)
-    // // console.log(tasks)
-    // // console.log(columns)
-    // const sourceColumn = columns[result.source.droppableId]
-    // const targetColumn = columns[result.destination.droppableId]
-    // const sourceIndex = result.source.index
-    // const targetIndex = result.destination.index
-    // const newOrder = reorderArray(sourceColumn.tasksId,sourceIndex,targetIndex)
-    // sourceColumn.tasksId = newOrder
-    //
-    // const kmecolumns = {...columns, sourceColumn}
-    // console.log(newOrder)
-
-    // return newOrder
-
-    // return sourceColumn === targetColumn ? reorderArray(sourceColumn.tasksId,sourceIndex,targetIndex) : null
   }
 
   return <DragDropContext onDragEnd={onDragEnd}>
