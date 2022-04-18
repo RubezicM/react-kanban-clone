@@ -7,12 +7,13 @@ const Container = styled.div`
   padding: 8px;
   border-radius: 2px;
   margin: 5px;
-  
+  text-decoration: ${props => (props.type === 'finished' ? 'line-through' : 'none')};
+  color:   ${props => (props.type === 'finished' ? 'gray' : 'inherit')};
   &:not(:last-child){
     margin-bottom: 8px;
   } 
 `
-function Card ({ task, index }) {
+function Card ({ task, index, typeOfTask }) {
 
   const getItemStyle = (isDragging, styles) => {
     // change background colour if dragging
@@ -25,6 +26,7 @@ function Card ({ task, index }) {
 
 
   useEffect(()=>{
+    console.log('type',typeOfTask)
   },[])
 
   return (
@@ -34,7 +36,8 @@ function Card ({ task, index }) {
              {...provided.draggableProps}
              {...provided.dragHandleProps}
               ref={provided.innerRef}
-              isDragging={snapshot.isDragging}>
+              isDragging={snapshot.isDragging}
+              type={typeOfTask}>
           <p>{task.content}</p>
       </Container>)}
 

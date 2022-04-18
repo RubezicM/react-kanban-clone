@@ -8,7 +8,6 @@ import { DragDropContainer } from './context/DragDropContext'
 export const Content = () => (
   <LanesProvider>
   <DragDropContainer>
-
       <Router>
         <>
           <div className="h-full">

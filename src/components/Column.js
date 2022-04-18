@@ -139,7 +139,7 @@ function Column ({ lane, tasks }) {
                     {...provided.droppableProps}
                     isDraggingOver={snapshot.isDraggingOver}>
             {tasks.map((task, index) => {
-              return <Card key={`${task.id}`} task={task} index={index}/>
+              return <Card key={`${task.id}`} task={task} index={index} typeOfTask={lane.type}/>
             })}
 
             {provided.placeholder}

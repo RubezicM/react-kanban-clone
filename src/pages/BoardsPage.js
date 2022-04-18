@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { LanesContext } from '../context/LanesContext'
 import Column from '../components/Column'
 import styled from 'styled-components'
