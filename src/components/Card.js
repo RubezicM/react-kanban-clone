@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Draggable } from 'react-dnd-beautiful'
 import styled from 'styled-components'
 
@@ -14,20 +14,6 @@ const Container = styled.div`
   } 
 `
 function Card ({ task, index, typeOfTask }) {
-
-  const getItemStyle = (isDragging, styles) => {
-    // change background colour if dragging
-    return {
-      background: isDragging ? "lightgreen" : "white",
-      ...styles
-    }
-
-  };
-
-
-  useEffect(()=>{
-    console.log('type',typeOfTask)
-  },[])
 
   return (
     <Draggable draggableId={`${task.id}`} index={index}>

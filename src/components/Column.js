@@ -61,13 +61,14 @@ function Column ({ lane, tasks }) {
 
 
   useEffect(()=>{
+
     if(lane.title) {
       setTitle(lane.title)
     } else {
       inputLaneName.current.focus()
     }
 
-  }, [])
+  }, [lane.title])
 
 
   useEffect(()=>{
