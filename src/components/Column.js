@@ -1,16 +1,18 @@
-import React, { useContext, useState, useEffect } from 'react'
-import Card from './Card'
+import React, { useContext, useState, useEffect, useRef } from 'react'
+
 import { Droppable } from 'react-dnd-beautiful'
 import styled from 'styled-components'
 import { LanesContext } from '../context/LanesContext'
-import Button from '@mui/material/Button'
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
+import Card from './Card'
 
+
+import Button from '@mui/material/Button'
 import { MdModeEditOutline } from 'react-icons/md'
 
+import { v4 as uuidv4 } from 'uuid';
+
 const Container = styled.div`
-  margin:8px;
+  margin: 0 8px 0 8px;
   border: 1px solid lightgray; 
   border-radius:2px;
   width: 220px;
@@ -37,45 +39,98 @@ const AddNewTask = styled.div`
   cursor: pointer;
 `
 
-const ModalStyle = styled(Box)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400;
-  background-color: orange;
-  border: 2px solid #000;
-  box-shadow: 24;
+const Input = styled.input`
+  border: 1px solid lightgrey;
+  padding: 8px;
+  border-radius: 2px;
+  
+  &:not(:last-child){
+    margin-bottom: 8px;
+  }
 `
 
 function Column ({ lane, tasks }) {
   const [title, setTitle] = useState('')
   const { dispatch } = useContext(LanesContext)
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [addingNewTask, setAddingNewTask] = useState(false);
+  const [task, setTask] = useState('');
+
+
+  const inputTaskName = useRef(null);
+  const inputLaneName = useRef(null);
+
 
   useEffect(()=>{
-    setTitle(lane.title)
+    if(lane.title) {
+      setTitle(lane.title)
+    } else {
+      inputLaneName.current.focus()
+    }
+
   }, [])
 
 
-  const handleChangeTitle = (e) => {
+  useEffect(()=>{
+    if(addingNewTask) {
+      inputTaskName.current.focus()
+    }
+  }, [addingNewTask])
 
+
+  const handleTitleTyping = (e) => {
     setTitle(e.target.value)
-
-    dispatch({type:"UPDATE_COLUMN_TITLE", payload: { ...lane, title:e.target.value }})
-
   }
 
+  const handleTaskTyping = (e) => {
+    const task = e.target.value
+    setTask(task)
+  }
+
+  const handleShowInput = () => {
+    setAddingNewTask(true)
+  }
+
+
   const handleAddNewTask = () => {
-    handleOpen()
+
+    if(!task) {
+      setAddingNewTask(false)
+      return
+    }
+
+    const taskId = uuidv4()
+
+    dispatch({type: 'ADD_NEW_TASK',
+              payload: { task:{[taskId]: { id: taskId, content: task}},
+                         taskId: taskId,
+                         columnId: lane.id }})
+
+    setAddingNewTask(false)
+    setTask('')
+  }
+
+
+  const handleKeyPressInputTask = (e) => {
+    if (e.key === 'Enter') {
+      handleAddNewTask()
+    }
+  }
+  
+  const handleKeyPressInputLane = (e) => {
+    if (e.key === 'Enter') {
+      handleChangeLaneTitle()
+      inputLaneName.current.blur()
+    }
+  }
+
+  const handleChangeLaneTitle = () => {
+    dispatch({type:"UPDATE_COLUMN_TITLE", payload: { ...lane, title }})
   }
 
   return (
     <Container>
       <Title>
-        <input type="text" value={title} onChange={handleChangeTitle}/>
+        <input type="text" value={title} onChange={handleTitleTyping} ref={inputLaneName} onBlur={handleChangeLaneTitle} onKeyPress={handleKeyPressInputLane} placeholder='Lane name..'/>
         <MdModeEditOutline style={{ marginLeft: '10px' }}/>
       </Title>
       <Droppable droppableId={lane.id}>
@@ -84,29 +139,18 @@ function Column ({ lane, tasks }) {
                     {...provided.droppableProps}
                     isDraggingOver={snapshot.isDraggingOver}>
             {tasks.map((task, index) => {
-              return <Card key={task.id} task={task} index={index}/>
+              return <Card key={`${task.id}`} task={task} index={index}/>
             })}
 
             {provided.placeholder}
+            {addingNewTask &&
+            <Input type='text' value={task} ref={inputTaskName} onChange={handleTaskTyping} onBlur={handleAddNewTask} onKeyPress={handleKeyPressInputTask} placeholder='Task name..'/>}
           </TaskList>
         )}
       </Droppable>
-      <AddNewTask onClick={handleAddNewTask}>
-        <Button variant='contained' size='small'>+ Add new task</Button>
+      <AddNewTask onClick={handleShowInput}>
+        <Button variant='contained' size='small' color='success'>+ Add new task</Button>
       </AddNewTask>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <ModalStyle>
-          <h1>Hello now!</h1>
-        </ModalStyle>
-
-      </Modal>
-
-
     </Container>
   );
 }

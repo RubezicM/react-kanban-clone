@@ -3,24 +3,18 @@ import { LanesContext } from '../context/LanesContext'
 import Column from '../components/Column'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
-
+import Button from '@mui/material/Button'
 
 const Container = styled.div`
   display:flex;
 `
 
+const AddNewLaneButton = styled(Button)`
+  align-self:start;
+`
+
 const BoardsPage = (props) => {
-  const { columns, dispatch } = useContext(LanesContext)
-  const { tasks, } = useContext(LanesContext)
-  // const fillLanes = () => {
-  //     dispatch({type:'PREFILL', payload: initialData})
-  // }
-  //
-  // useEffect(()=>{
-  //   fillLanes()
-  // }, [data])
-
-
+  const { tasks, columns, dispatch } = useContext(LanesContext)
 
   const onAddNewLane = () => {
     //
@@ -34,18 +28,15 @@ const BoardsPage = (props) => {
       * */
 
     const id = uuidv4()
-    console.log('id',id)
     const lane = {
-      "new_lane": {
-        id: "new_lane",
-        title: 'new_lane',
+      [id]: {
+        id: id,
+        title: null,
         tasksId: []
       }
     }
 
     dispatch({ type: 'ADD_LANE', payload: { ...lane } })
-    console.log(columns)
-    console.log(tasks)
   }
 
   return (
@@ -53,10 +44,9 @@ const BoardsPage = (props) => {
       <Container>
       {columns ? Object.keys(columns).map((lane,index)=> {
         const _tasks = columns[lane].tasksId.map(taskID => tasks[taskID] ?? tasks[taskID])
-        console.log(_tasks)
         return <Column key={index} lane={columns[lane]} tasks={_tasks}/>
       }) : null }
-        <button onClick={onAddNewLane} className={'btn btn-primary btn-sm'}>+ Add New Lane</button>
+        <AddNewLaneButton variant='contained' size='small' onClick={onAddNewLane}>+ Add New Lane</AddNewLaneButton>
       </Container>
 
     </div>

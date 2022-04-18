@@ -40,6 +40,12 @@ const LanesReducer = (state, action) => {
       return { ...state, columns: action.payload }
     case 'UPDATE_COLUMN_TITLE':
       return { ...state, columns: { ...state.columns, [action.payload.id]: { ...action.payload, title:action.payload.title } } }
+    // case 'ADD_NEW_TASK':
+    //   return { ...state, tasks: [...state.tasks, { ...action.payload.task }], columns: { ...state.columns, [action.payload.columnId]: { ...state.columns[action.payload.columnId],tasksId: [...state.columns[action.payload.columnId]['tasksId'], action.payload.task.id ] } }}
+    case 'ADD_NEW_TASK':
+      console.log(action.payload)
+      return { ...state, tasks: {...state.tasks, ...action.payload.task }, columns: { ...state.columns, [action.payload.columnId]: { ...state.columns[action.payload.columnId],tasksId: [...state.columns[action.payload.columnId]['tasksId'], action.payload.taskId ] } }}
+      return state
     default:
       return state
   }

@@ -8,15 +8,13 @@ export const DragDropContainer = ({children}) => {
 
   const onDragEnd = result => {
     const { destination, source, draggableId } = result
-    console.log('res',result)
+
     if(!destination) return
 
     if(destination.droppableId ===  source.droppableId && destination.index === source.index) return
 
     const startColumn = columns[source.droppableId]
     const finishColumn = columns[destination.droppableId]
-
-    console.log('finishColumn',finishColumn)
 
     if(startColumn === finishColumn) {
       const newTaskIds = Array.from(startColumn.tasksId)
