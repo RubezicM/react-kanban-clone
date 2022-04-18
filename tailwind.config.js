@@ -6,7 +6,6 @@ module.exports = {
   variants: {
     extend: {}
   },
-  plugins: [require('daisyui')],
   important: true,
 
 };

@@ -9,7 +9,7 @@ export const Content = () => (
   <DragDropContainer>
       <Router>
         <>
-          <div className="h-full">
+          <div>
             <Routes>
               <Route exact path="/" element={<BoardsPage/>}/>
             </Routes>
