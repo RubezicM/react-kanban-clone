@@ -2,7 +2,7 @@
 
 Kanban clone with a minimal styling done in react.
 
-[Lin to an App](https://625d5c95196b773b30bcea0a--euphonious-malabi-c83151.netlify.app/)
+[Link to an App](https://625d5c95196b773b30bcea0a--euphonious-malabi-c83151.netlify.app/)
 
 # Getting Started with Create React App
 
