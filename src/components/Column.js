@@ -1,13 +1,14 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 
-import { Droppable } from 'react-dnd-beautiful'
+import { Droppable, Draggable } from 'react-dnd-beautiful'
 import styled from 'styled-components'
 import { LanesContext } from '../context/LanesContext'
 import Card from './Card'
 
 
 import Button from '@mui/material/Button'
-import { MdModeEditOutline } from 'react-icons/md'
+import { MdDragIndicator } from 'react-icons/md'
+
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -50,26 +51,13 @@ const Input = styled.input`
   }
 `
 
-function Column ({ lane, tasks }) {
-  const [title, setTitle] = useState('')
+function Column ({ lane, tasks, index }) {
+
   const { dispatch } = useContext(LanesContext)
   const [addingNewTask, setAddingNewTask] = useState(false);
   const [task, setTask] = useState('');
 
-
   const inputTaskName = useRef(null);
-  const inputLaneName = useRef(null);
-
-
-  useEffect(()=>{
-
-    if(lane.title) {
-      setTitle(lane.title)
-    } else {
-      inputLaneName.current.focus()
-    }
-
-  }, [lane.title])
 
 
   useEffect(()=>{
@@ -78,10 +66,6 @@ function Column ({ lane, tasks }) {
     }
   }, [addingNewTask])
 
-
-  const handleTitleTyping = (e) => {
-    setTitle(e.target.value)
-  }
 
   const handleTaskTyping = (e) => {
     const task = e.target.value
@@ -117,43 +101,40 @@ function Column ({ lane, tasks }) {
       handleAddNewTask()
     }
   }
-  
-  const handleKeyPressInputLane = (e) => {
-    if (e.key === 'Enter') {
-      handleChangeLaneTitle()
-      inputLaneName.current.blur()
-    }
-  }
-
-  const handleChangeLaneTitle = () => {
-    dispatch({type:"UPDATE_COLUMN_TITLE", payload: { ...lane, title }})
-  }
 
   return (
-    <Container>
-      <Title>
-        <input type="text" value={title} onChange={handleTitleTyping} ref={inputLaneName} onBlur={handleChangeLaneTitle} onKeyPress={handleKeyPressInputLane} placeholder='Lane name..'/>
-        <MdModeEditOutline style={{ marginLeft: '10px' }}/>
-      </Title>
-      <Droppable droppableId={lane.id}>
-        {(provided, snapshot) => (
-          <TaskList ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    isDraggingOver={snapshot.isDraggingOver}>
-            {tasks.map((task, index) => {
-              return <Card key={`${task.id}`} task={task} index={index} typeOfTask={lane.type}/>
-            })}
+    <Draggable key={lane.id} draggableId={lane.id} index={index}>
+      {provided=> (
+        <Container
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+        >
+          <Title { ...provided.dragHandleProps }>
+            <MdDragIndicator style={{ margin: '0 10px' }}/>
+            {lane.title}
+          </Title>
+          <Droppable droppableId={lane.id} type="task">
+            {(provided, snapshot) => (
+              <TaskList ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        isDraggingOver={snapshot.isDraggingOver}>
+                {tasks.map((task, index) => {
+                  return <Card key={`${task.id}`} task={task} index={index} typeOfTask={lane.type}/>
+                })}
 
-            {provided.placeholder}
-            {addingNewTask &&
-            <Input type='text' value={task} ref={inputTaskName} onChange={handleTaskTyping} onBlur={handleAddNewTask} onKeyPress={handleKeyPressInputTask} placeholder='Task name..'/>}
-          </TaskList>
-        )}
-      </Droppable>
-      <AddNewTask onClick={handleShowInput}>
-        <Button variant='contained' size='small' color='success'>+ Add new task</Button>
-      </AddNewTask>
-    </Container>
+                {provided.placeholder}
+                {addingNewTask &&
+                <Input type='text' value={task} ref={inputTaskName} onChange={handleTaskTyping} onBlur={handleAddNewTask} onKeyPress={handleKeyPressInputTask} placeholder='Task name..'/>}
+              </TaskList>
+            )}
+          </Droppable>
+          <AddNewTask onClick={handleShowInput}>
+            <Button variant='contained' size='small' color='success'>+ Add new task</Button>
+          </AddNewTask>
+        </Container>
+      )}
+    </Draggable>
+
   );
 }
 

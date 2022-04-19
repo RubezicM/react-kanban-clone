@@ -1,6 +1,5 @@
 import { CreateTasksReducer } from './LanesReducer'
 
-
 // Initial state
 const initialState = {
 
@@ -41,18 +40,15 @@ const LanesReducer = (state, action) => {
   switch (action.type) {
     case 'GET_LANES':
       return { ...state }
-    case 'ADD_LANE':
-      return { ...state, columns: {...state.columns, ...action.payload} }
     case 'REORDER_TASKS_IN_COLUMN':
       return { ...state, columns: { ...state.columns, [action.payload.id]: { ...action.payload } } }
+    case 'REORDER_COLUMNS':
+      return { ...state, ...action.payload }
     case 'MOVE_TASK_TO_COLUMN':
       return { ...state, columns: action.payload }
     case 'UPDATE_COLUMN_TITLE':
       return { ...state, columns: { ...state.columns, [action.payload.id]: { ...action.payload, title:action.payload.title } } }
-    // case 'ADD_NEW_TASK':
-    //   return { ...state, tasks: [...state.tasks, { ...action.payload.task }], columns: { ...state.columns, [action.payload.columnId]: { ...state.columns[action.payload.columnId],tasksId: [...state.columns[action.payload.columnId]['tasksId'], action.payload.task.id ] } }}
     case 'ADD_NEW_TASK':
-      console.log(action.payload)
       return { ...state, tasks: {...state.tasks, ...action.payload.task }, columns: { ...state.columns, [action.payload.columnId]: { ...state.columns[action.payload.columnId],tasksId: [...state.columns[action.payload.columnId]['tasksId'], action.payload.taskId ] } }}
     default:
       return state

@@ -16,7 +16,6 @@ export const Content = () => (
           </div>
         </>
       </Router>
-
   </DragDropContainer>
     </LanesProvider>
 );
